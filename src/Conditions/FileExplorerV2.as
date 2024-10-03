@@ -724,7 +724,7 @@ namespace FileExplorer {
         }
 
         array<ElementInfo@>@ GetSelectedElements() {
-            if (instConfig.returnType != "ElementInfo") { log("Return type is not 'ElementInfo'. Cannot get selected elements.", LogLevel::Warn, 727, "IsSelectionComplete"); return null; }
+            if (instConfig.returnType != "elementinfo") { log("Return type is not 'ElementInfo'. Cannot get selected elements.", LogLevel::Warn, 727, "IsSelectionComplete"); return null; }
             
             selectionComplete = false;
             utils.TruncateSelectedPathsIfNeeded();
@@ -741,7 +741,7 @@ namespace FileExplorer {
         void SetSelectionComplete(array<string>@ paths, array<ElementInfo@>@ elements) {
             if (instConfig.returnType == "path" && paths !is null) {
                 selectedPaths = paths;
-            } else if (instConfig.returnType == "ElementInfo" && elements !is null) {
+            } else if (instConfig.returnType == "elementinfo" && elements !is null) {
                 selectedElements = elements;
             }
             selectionComplete = true;
@@ -2558,7 +2558,7 @@ namespace FileExplorer {
                 if(instConfig.returnType == "path") {
                     validReturnAmount = instConfig.selectedPaths.Length >= uint(instConfig.minMaxReturnAmount.x) &&
                                         (instConfig.selectedPaths.Length <= uint(instConfig.minMaxReturnAmount.y) || instConfig.minMaxReturnAmount.y == -1);
-                } else if(instConfig.returnType == "ElementInfo") {
+                } else if(instConfig.returnType == "elementinfo") {
                     validReturnAmount = instConfig.selectedElements.Length >= uint(instConfig.minMaxReturnAmount.x) &&
                                         (instConfig.selectedElements.Length <= uint(instConfig.minMaxReturnAmount.y) || instConfig.minMaxReturnAmount.y == -1);
                 } else {
@@ -2575,7 +2575,7 @@ namespace FileExplorer {
                                 break;
                             }
                         }
-                    } else if(instConfig.returnType == "ElementInfo") {
+                    } else if(instConfig.returnType == "elementinfo") {
                         for(uint i = 0; i < instConfig.selectedElements.Length; i++) {
                             ElementInfo@ element = instConfig.selectedElements[i];
                             if(utils.IsValidReturnElement(element)) {
@@ -2590,7 +2590,7 @@ namespace FileExplorer {
                         if (UI::Button(buttonText)) {
                             if (instConfig.returnType == "path") {
                                 explorer.exports.SetSelectionComplete(instConfig.selectedPaths, null);
-                            } else if (instConfig.returnType == "ElementInfo") {
+                            } else if (instConfig.returnType == "elementinfo") {
                                 explorer.exports.SetSelectionComplete(null, instConfig.selectedElements);
                             }
                             explorer.Close();
@@ -2598,14 +2598,14 @@ namespace FileExplorer {
                     } else {
                         if(instConfig.returnType == "path") {
                             utils.DisabledButton("Return Selected Paths");
-                        } else if(instConfig.returnType == "ElementInfo") {
+                        } else if(instConfig.returnType == "elementinfo") {
                             utils.DisabledButton("Return Selected Elements");
                         }
                     }
                 } else {
                     if(instConfig.returnType == "path") {
                         utils.DisabledButton("Return Selected Paths");
-                    } else if(instConfig.returnType == "ElementInfo") {
+                    } else if(instConfig.returnType == "elementinfo") {
                         utils.DisabledButton("Return Selected Elements");
                     }
                 }
@@ -2614,7 +2614,7 @@ namespace FileExplorer {
 
                 if(instConfig.returnType == "path") {
                     UI::Text("Selected element amount: " + instConfig.selectedPaths.Length);
-                } else if(instConfig.returnType == "ElementInfo") {
+                } else if(instConfig.returnType == "elementinfo") {
                     UI::Text("Selected element amount: " + instConfig.selectedElements.Length);
                 }
 
@@ -2746,7 +2746,7 @@ namespace FileExplorer {
 
                     SelectableWithClickCheck(element, ContextType::selectedElements);
                 }
-            } else if (instConfig.returnType == "ElementInfo") {
+            } else if (instConfig.returnType == "elementinfo") {
                 for (uint i = 0; i < instConfig.selectedElements.Length; i++) {
                     ElementInfo@ element = instConfig.selectedElements[i];
 
@@ -2923,7 +2923,7 @@ namespace FileExplorer {
                                     instConfig.selectedPaths.InsertLast(element.path);
                                     utils.TruncateSelectedPathsIfNeeded();
                                 }
-                            } else if (instConfig.returnType == "ElementInfo") {
+                            } else if (instConfig.returnType == "elementinfo") {
                                 if (instConfig.selectedElements.Find(element) == -1) {
                                     instConfig.selectedElements.InsertLast(element);
                                     utils.TruncateSelectedPathsIfNeeded();
@@ -2939,7 +2939,7 @@ namespace FileExplorer {
                             if (instConfig.returnType == "path") {
                                 array<string> paths = { element.path };
                                 explorer.exports.SetSelectionComplete(paths, null);
-                            } else if (instConfig.returnType == "ElementInfo") {
+                            } else if (instConfig.returnType == "elementinfo") {
                                 array<ElementInfo@> elements = { element };
                                 explorer.exports.SetSelectionComplete(null, elements);
                             }
@@ -3033,7 +3033,7 @@ namespace FileExplorer {
                             if(instConfig.returnType == "path") {
                                 instConfig.selectedPaths.InsertLast(element.path);
                                 utils.TruncateSelectedPathsIfNeeded();
-                            } else if(instConfig.returnType == "ElementInfo") {
+                            } else if(instConfig.returnType == "elementinfo") {
                                 instConfig.selectedElements.InsertLast(element);
                                 utils.TruncateSelectedPathsIfNeeded();
                             }
@@ -3047,7 +3047,7 @@ namespace FileExplorer {
                                 instConfig.selectedPaths.InsertLast(element.path);
                                 utils.TruncateSelectedPathsIfNeeded();
                             }
-                        } else if (instConfig.returnType == "ElementInfo") {
+                        } else if (instConfig.returnType == "elementinfo") {
                             if (instConfig.selectedElements.Find(element) == -1) {
                                 instConfig.selectedElements.InsertLast(element);
                                 utils.TruncateSelectedPathsIfNeeded();
