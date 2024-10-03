@@ -14,3 +14,5 @@ I tried to make integrating the File Explorer as easy as possible :D
 3. Call FileExplorer::fe_Start() to open the file explorer, (see example in `src/Main.as`)
 4. Call FileExplorer::fe_GetExplorerById() to get the selected data, (see example in `src/Main.as`)
 5. Use the selected data in your script.
+
+(note that the `src/Conditions/FileExplorer.as` file has a somewhat comprihensive guide on how everything in the file explorer works, as well as how to implement it, I'd recommend looking at that if you're interested.)
