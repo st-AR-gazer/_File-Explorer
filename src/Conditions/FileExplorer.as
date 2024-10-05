@@ -1878,12 +1878,12 @@ namespace FileExplorer {
             string pluginName = Meta::ExecutingPlugin().Name;
             string sessionKey = pluginName + "::" + instConfig.id;
 
-            if (!explorersByPlugin.Get(sessionKey, @explorer)) { log("Explorer not found for sessionKey: " + sessionKey, LogLevel::Error, 1855, "Open"); return; }
-            log("Config initialized with path: " + instConfig.path, LogLevel::Info, 1856, "Open");
+            if (!explorersByPlugin.Get(sessionKey, @explorer)) { log("Explorer not found for sessionKey: " + sessionKey, LogLevel::Error, 1881, "Open"); return; }
+            log("Config initialized with path: " + instConfig.path, LogLevel::Info, 1882, "Open");
 
-            if (nav is null) { @nav = Navigation(this); log("Navigation initialized", LogLevel::Info, 1858, "Open"); }
-            if (nav is null) { log("Navigation is null after initialization.", LogLevel::Error, 1859, "Open"); return; }
-            log("Setting navigation path to: " + instConfig.path, LogLevel::Info, 1860, "Open");
+            if (nav is null) { @nav = Navigation(this); log("Navigation initialized", LogLevel::Info, 1884, "Open"); }
+            if (nav is null) { log("Navigation is null after initialization.", LogLevel::Error, 1885, "Open"); return; }
+            log("Setting navigation path to: " + instConfig.path, LogLevel::Info, 1886, "Open");
 
             nav.SetPath(instConfig.path);
             config.LoadSharedSettings();
@@ -2545,7 +2545,7 @@ namespace FileExplorer {
                 ElementInfo@ selectedElement = explorer.tab[0].GetSelectedElement();
 
                 if (selectedElement !is null && selectedElement.isFolder) {
-                    log("Deleting empty folder: " + selectedElement.path, LogLevel::Info, 2522, "Render_DeleteConfirmationPopup");
+                    log("Deleting empty folder: " + selectedElement.path, LogLevel::Info, 2548, "Render_DeleteConfirmationPopup");
                     IO::DeleteFolder(selectedElement.path);
                     utils.RENDER_DELETE_CONFIRMATION_POPUP_FLAG = false;
                     explorer.tab[0].LoadDirectory(explorer.tab[0].nav.GetPath());
@@ -2559,12 +2559,12 @@ namespace FileExplorer {
                 UI::Separator();
                 if (UI::Button("Yes, delete all")) {
                     if (selectedElement !is null && selectedElement.isFolder) {
-                        log("Deleting folder with contents: " + selectedElement.path, LogLevel::Info, 2536, "Render_DeleteConfirmationPopup");
+                        log("Deleting folder with contents: " + selectedElement.path, LogLevel::Info, 2562, "Render_DeleteConfirmationPopup");
                         IO::DeleteFolder(selectedElement.path, true);
                         utils.RENDER_DELETE_CONFIRMATION_POPUP_FLAG = false;
                         explorer.tab[0].LoadDirectory(explorer.tab[0].nav.GetPath());
                     } else {
-                        log("No selected element or element is not a folder.", LogLevel::Error, 2541, "Render_DeleteConfirmationPopup");
+                        log("No selected element or element is not a folder.", LogLevel::Error, 2567, "Render_DeleteConfirmationPopup");
                     }
                     UI::CloseCurrentPopup();
                 }
@@ -3067,14 +3067,14 @@ namespace FileExplorer {
                         if(index != -1) {
                             instConfig.selectedPaths.RemoveAt(index);
                             element.isSelected = false;
-                            log("Removed path from selected paths: " + element.path, LogLevel::Info, 10000, "HandleElementSelection");
+                            log("Removed path from selected paths: " + element.path, LogLevel::Info, 3070, "HandleElementSelection");
                         }
                     } else if(instConfig.returnType == "elementinfo") {
                         int index = instConfig.selectedElements.Find(element);
                         if(index != -1) {
                             instConfig.selectedElements.RemoveAt(index);
                             element.isSelected = false;
-                            log("Removed element from selected elements: " + element.name, LogLevel::Info, 10001, "HandleElementSelection");
+                            log("Removed element from selected elements: " + element.name, LogLevel::Info, 3077, "HandleElementSelection");
                         }
                     }
                 }
@@ -3087,26 +3087,26 @@ namespace FileExplorer {
                             instConfig.selectedElements.InsertLast(element);
                             utils.TruncateSelectedPathsIfNeeded();
                         }
-                        log("Added element to selected elements via pinnedElements double-click: " + element.name, LogLevel::Info, 10002, "HandleElementSelection");
+                        log("Added element to selected elements via pinnedElements double-click: " + element.name, LogLevel::Info, 3090, "HandleElementSelection");
                     }
                     @explorer.CurrentSelectedElement = element;
                 }
                 else if (contextType == ContextType::mainArea) {
                     if (element.isFolder) {
                         explorer.tab[0].nav.MoveIntoSelectedDirectory();
-                        log("Navigated into folder: " + element.path, LogLevel::Info, 10003, "HandleElementSelection");
+                        log("Navigated into folder: " + element.path, LogLevel::Info, 3097, "HandleElementSelection");
                     } else if (canAddMore) {
                         if (instConfig.returnType == "path") {
                             if (instConfig.selectedPaths.Find(element.path) == -1) {
                                 instConfig.selectedPaths.InsertLast(element.path);
                                 utils.TruncateSelectedPathsIfNeeded();
-                                log("Added path to selected paths via mainArea double-click: " + element.path, LogLevel::Info, 10004, "HandleElementSelection");
+                                log("Added path to selected paths via mainArea double-click: " + element.path, LogLevel::Info, 3103, "HandleElementSelection");
                             }
                         } else if (instConfig.returnType == "elementinfo") {
                             if (instConfig.selectedElements.Find(element) == -1) {
                                 instConfig.selectedElements.InsertLast(element);
                                 utils.TruncateSelectedPathsIfNeeded();
-                                log("Added element to selected elements via mainArea double-click: " + element.name, LogLevel::Info, 10005, "HandleElementSelection");
+                                log("Added element to selected elements via mainArea double-click: " + element.name, LogLevel::Info, 3109, "HandleElementSelection");
                             }
                         }
                     }
@@ -3125,7 +3125,7 @@ namespace FileExplorer {
                             instConfig.selectedElements.InsertLast(element);
                             utils.TruncateSelectedPathsIfNeeded();
                         }
-                        log("Added element to selected elements via pinnedElements single click: " + element.name, LogLevel::Info, 10006, "HandleElementSelection");
+                        log("Added element to selected elements via pinnedElements single click: " + element.name, LogLevel::Info, 3128, "HandleElementSelection");
                     }
                     @explorer.CurrentSelectedElement = element;
                     element.lastClickTime = currentTime;
@@ -3282,14 +3282,14 @@ namespace FileExplorer {
             void ReadHeader() {
                 gbxFile.SetPos(17);
                 int chunkCount = gbxFile.Read(4).ReadInt32();
-                if (VERBOSE_GBX) log("Number of header chunks: " + tostring(chunkCount), LogLevel::Info, 3194, "ReadHeader");
+                if (VERBOSE_GBX) log("Number of header chunks: " + tostring(chunkCount), LogLevel::Info, 3285, "ReadHeader");
 
                 for (int i = 0; i < chunkCount; i++) {
                     GbxHeaderChunkInfo chunk;
                     chunk.ChunkId = gbxFile.Read(4).ReadInt32();
                     chunk.ChunkSize = gbxFile.Read(4).ReadInt32() & 0x7FFFFFFF;
                     headerChunks.InsertLast(chunk);
-                    if (VERBOSE_GBX) log("Header Chunk " + tostring(i) + ": ID=" + tostring(chunk.ChunkId) + ", Size=" + tostring(chunk.ChunkSize), LogLevel::Info, 3201, "ReadHeader");
+                    if (VERBOSE_GBX) log("Header Chunk " + tostring(i) + ": ID=" + tostring(chunk.ChunkId) + ", Size=" + tostring(chunk.ChunkSize), LogLevel::Info, 3292, "ReadHeader");
                 }
             }
 
@@ -3299,7 +3299,7 @@ namespace FileExplorer {
                 for (uint i = 0; i < headerChunks.Length; i++) {
                     MemoryBuffer chunkData = gbxFile.Read(headerChunks[i].ChunkSize);
 
-                    if (VERBOSE_GBX) log("Processing ChunkId: " + tostring(headerChunks[i].ChunkId), LogLevel::Info, 3211, "ReadChunks");
+                    if (VERBOSE_GBX) log("Processing ChunkId: " + tostring(headerChunks[i].ChunkId), LogLevel::Info, 3302, "ReadChunks");
 
                     if (//headerChunks[i].ChunkId == GBX_CHUNK_IDS::Replay0 || 
                         headerChunks[i].ChunkId == GBX_CHUNK_IDS::Replay1 || 
@@ -3323,35 +3323,35 @@ namespace FileExplorer {
                         
                         try {
                             int xmlLength = chunkData.ReadInt32();
-                            if (VERBOSE_GBX) log("ChunkId " + tostring(headerChunks[i].ChunkId) + " contains XML of length: " + tostring(xmlLength), LogLevel::Info, 1006, "GbxParser::ReadChunks");
+                            if (VERBOSE_GBX) log("ChunkId " + tostring(headerChunks[i].ChunkId) + " contains XML of length: " + tostring(xmlLength), LogLevel::Info, 3326, "ReadChunks");
 
                             string currentXmlContent = chunkData.ReadString(xmlLength);
-                            if (VERBOSE_GBX) log("Read XML content: " + currentXmlContent.SubStr(0, Math::Min(currentXmlContent.Length, 100)), LogLevel::Dark, 1007, "GbxParser::ReadChunks");
+                            if (VERBOSE_GBX) log("Read XML content: " + currentXmlContent.SubStr(0, Math::Min(currentXmlContent.Length, 100)), LogLevel::Dark, 3329, "ReadChunks");
 
                             if (xmlContent != "") {
                                 xmlContent += currentXmlContent;
-                                if (VERBOSE_GBX) log("Accumulated XML content from ChunkId: " + tostring(headerChunks[i].ChunkId), LogLevel::Info, 1008, "GbxParser::ReadChunks");
+                                if (VERBOSE_GBX) log("Accumulated XML content from ChunkId: " + tostring(headerChunks[i].ChunkId), LogLevel::Info, 3333, "ReadChunks");
                             } else {
                                 xmlContent = currentXmlContent;
-                                if (VERBOSE_GBX) log("Extracted XML content from ChunkId: " + tostring(headerChunks[i].ChunkId), LogLevel::Info, 1009, "GbxParser::ReadChunks");
+                                if (VERBOSE_GBX) log("Extracted XML content from ChunkId: " + tostring(headerChunks[i].ChunkId), LogLevel::Info, 3336, "ReadChunks");
                             }
                         } catch {
-                            if (VERBOSE_GBX) log("Error reading XML content from ChunkId: " + tostring(headerChunks[i].ChunkId), LogLevel::Error, 1010, "GbxParser::ReadChunks");
+                            if (VERBOSE_GBX) log("Error reading XML content from ChunkId: " + tostring(headerChunks[i].ChunkId), LogLevel::Error, 3339, "ReadChunks");
                             continue;
                         }
                     }
 
                     if (Time::Now - startTime > 300) {
-                        if (VERBOSE_GBX) log("Error: Timeout while reading GBX chunks for file: " + filePath, LogLevel::Error, 3235, "ReadChunks");
+                        if (VERBOSE_GBX) log("Error: Timeout while reading GBX chunks for file: " + filePath, LogLevel::Error, 3345, "ReadChunks");
                     }
                 }
 
-                if (VERBOSE_GBX) log("Total XML Content Length: " + tostring(xmlContent.Length), LogLevel::Info, 3239, "ReadChunks");
+                if (VERBOSE_GBX) log("Total XML Content Length: " + tostring(xmlContent.Length), LogLevel::Info, 3349, "ReadChunks");
             }
 
             void ParseXmlContent() {
                 if (xmlContent == "") {
-                    if (VERBOSE_GBX) log("Warning: No XML content found in GBX file: " + filePath, LogLevel::Warn, 3244, "ParseXmlContent");
+                    if (VERBOSE_GBX) log("Warning: No XML content found in GBX file: " + filePath, LogLevel::Warn, 3354, "ParseXmlContent");
                     return;
                 }
 
@@ -3367,7 +3367,7 @@ namespace FileExplorer {
                     metadata["exebuild"] = rootNode.Attribute("exebuild");
                     metadata["title"] = rootNode.Attribute("title");
 
-                    if (VERBOSE_GBX) log("Parsed GBX Type: " + gbxType, LogLevel::Info, 3263, "ParseXmlContent");
+                    if (VERBOSE_GBX) log("Parsed GBX Type: " + gbxType, LogLevel::Info, 3370, "ParseXmlContent");
 
                     if (gbxType == "map") {
                         ParseMapMetadata(rootNode);
@@ -3376,28 +3376,28 @@ namespace FileExplorer {
                     } else if (gbxType == "challenge") {
                         ParseChallengeMetadata(rootNode);
                     } else {
-                        if (VERBOSE_GBX) log("Warning: Unknown GBX type '" + gbxType + "' in file: " + filePath, LogLevel::Warn, 3272, "ParseXmlContent");
+                        if (VERBOSE_GBX) log("Warning: Unknown GBX type '" + gbxType + "' in file: " + filePath, LogLevel::Warn, 3379, "ParseXmlContent");
                     }
 
                     XML::Node playermodelNode = rootNode.Child("playermodel");
                     if (playermodelNode) {
                         metadata["playermodel_id"] = playermodelNode.Attribute("id");
-                        if (VERBOSE_GBX) log("Parsed playermodel_id: " + string(metadata["playermodel_id"]), LogLevel::Info, 3278, "ParseXmlContent");
+                        if (VERBOSE_GBX) log("Parsed playermodel_id: " + string(metadata["playermodel_id"]), LogLevel::Info, 3385, "ParseXmlContent");
                     }
                 } else {
-                    if (VERBOSE_GBX) log("Error: Missing root node in GBX file: " + filePath, LogLevel::Error, 3281, "ParseXmlContent");
+                    if (VERBOSE_GBX) log("Error: Missing root node in GBX file: " + filePath, LogLevel::Error, 3388, "ParseXmlContent");
                 }
             }
 
             void ParseMapMetadata(XML::Node &in rootNode) {
-                if (VERBOSE_GBX) log("Parsing Map Metadata", LogLevel::Info, 3286, "ParseMapMetadata");
+                if (VERBOSE_GBX) log("Parsing Map Metadata", LogLevel::Info, 3393, "ParseMapMetadata");
                 XML::Node identNode = rootNode.Child("ident");
                 if (identNode) {
                     metadata["map_uid"] = identNode.Attribute("uid");
                     metadata["map_name"] = identNode.Attribute("name");
                     metadata["map_author"] = identNode.Attribute("author");
                     metadata["map_authorzone"] = identNode.Attribute("authorzone");
-                    if (VERBOSE_GBX) log("Parsed ident node for Map", LogLevel::Info, 3293, "ParseMapMetadata");
+                    if (VERBOSE_GBX) log("Parsed ident node for Map", LogLevel::Info, 3400, "ParseMapMetadata");
                 }
 
                 ParseDescNode(rootNode);
@@ -3409,21 +3409,21 @@ namespace FileExplorer {
                     metadata["times_gold"] = timesNode.Attribute("gold");
                     metadata["times_authortime"] = timesNode.Attribute("authortime");
                     metadata["times_authorscore"] = timesNode.Attribute("authorscore");
-                    if (VERBOSE_GBX) log("Parsed times node for Map", LogLevel::Info, 3305, "ParseMapMetadata");
+                    if (VERBOSE_GBX) log("Parsed times node for Map", LogLevel::Info, 3412, "ParseMapMetadata");
                 }
 
                 ParseDependencies(rootNode);
             }
 
             void ParseReplayMetadata(XML::Node &in rootNode) {
-                if (VERBOSE_GBX) log("Parsing Replay Metadata", LogLevel::Info, 3312, "ParseReplayMetadata");
+                if (VERBOSE_GBX) log("Parsing Replay Metadata", LogLevel::Info, 3419, "ParseReplayMetadata");
                 XML::Node mapNode = rootNode.Child("map");
                 if (mapNode) {
                     metadata["map_uid"] = mapNode.Attribute("uid");
                     metadata["map_name"] = mapNode.Attribute("name");
                     metadata["map_author"] = mapNode.Attribute("author");
                     metadata["map_authorzone"] = mapNode.Attribute("authorzone");
-                    if (VERBOSE_GBX) log("Parsed map node for Replay", LogLevel::Info, 3319, "ParseReplayMetadata");
+                    if (VERBOSE_GBX) log("Parsed map node for Replay", LogLevel::Info, 3426, "ParseReplayMetadata");
                 }
 
                 ParseDescNode(rootNode);
@@ -3434,24 +3434,24 @@ namespace FileExplorer {
                     metadata["replay_respawns"] = timesNode.Attribute("respawns");
                     metadata["replay_stuntscore"] = timesNode.Attribute("stuntscore");
                     metadata["replay_validable"] = timesNode.Attribute("validable");
-                    if (VERBOSE_GBX) log("Parsed times node for Replay", LogLevel::Info, 3330, "ParseReplayMetadata");
+                    if (VERBOSE_GBX) log("Parsed times node for Replay", LogLevel::Info, 3437, "ParseReplayMetadata");
                 }
 
                 XML::Node checkpointsNode = rootNode.Child("checkpoints");
                 if (checkpointsNode) {
                     metadata["replay_checkpoints"] = checkpointsNode.Attribute("cur");
-                    if (VERBOSE_GBX) log("Parsed checkpoints node for Replay", LogLevel::Info, 3336, "ParseReplayMetadata");
+                    if (VERBOSE_GBX) log("Parsed checkpoints node for Replay", LogLevel::Info, 3443, "ParseReplayMetadata");
                 }
             }
 
             void ParseChallengeMetadata(XML::Node &in rootNode) {
-                if (VERBOSE_GBX) log("Parsing Challenge Metadata", LogLevel::Info, 3341, "ParseChallengeMetadata");
+                if (VERBOSE_GBX) log("Parsing Challenge Metadata", LogLevel::Info, 3448, "ParseChallengeMetadata");
                 XML::Node identNode = rootNode.Child("ident");
                 if (identNode) {
                     metadata["map_uid"] = identNode.Attribute("uid");
                     metadata["map_name"] = identNode.Attribute("name");
                     metadata["map_author"] = identNode.Attribute("author");
-                    if (VERBOSE_GBX) log("Parsed ident node for Challenge", LogLevel::Info, 3347, "ParseChallengeMetadata");
+                    if (VERBOSE_GBX) log("Parsed ident node for Challenge", LogLevel::Info, 3454, "ParseChallengeMetadata");
                 }
 
                 ParseDescNode(rootNode);
@@ -3463,7 +3463,7 @@ namespace FileExplorer {
                     metadata["times_gold"] = timesNode.Attribute("gold");
                     metadata["times_authortime"] = timesNode.Attribute("authortime");
                     metadata["times_authorscore"] = timesNode.Attribute("authorscore");
-                    if (VERBOSE_GBX) log("Parsed times node for Challenge", LogLevel::Info, 3359, "ParseChallengeMetadata");
+                    if (VERBOSE_GBX) log("Parsed times node for Challenge", LogLevel::Info, 3466, "ParseChallengeMetadata");
                 }
 
                 ParseDependencies(rootNode);
@@ -3481,7 +3481,7 @@ namespace FileExplorer {
                     metadata["desc_validated"] = descNode.Attribute("validated");
                     metadata["desc_nblaps"] = descNode.Attribute("nblaps");
                     metadata["desc_hasghostblocks"] = descNode.Attribute("hasghostblocks");
-                    if (VERBOSE_GBX) log("Parsed desc node", LogLevel::Info, 3377, "ParseDescNode");
+                    if (VERBOSE_GBX) log("Parsed desc node", LogLevel::Info, 3484, "ParseDescNode");
                 }
             }
 
@@ -3495,14 +3495,14 @@ namespace FileExplorer {
                         depNode = depNode.NextSibling();
                         depIndex++;
                     }
-                    if (VERBOSE_GBX) log("Parsed dependencies node with " + tostring(depIndex) + " dependencies", LogLevel::Info, 3391, "ParseDependencies");
+                    if (VERBOSE_GBX) log("Parsed dependencies node with " + tostring(depIndex) + " dependencies", LogLevel::Info, 3498, "ParseDependencies");
                 }
             }
 
             void ListAllChunkIds() {
-                if (VERBOSE_GBX) log("Listing all ChunkIds for file: " + filePath, LogLevel::Info, 3396, "ListAllChunkIds");
+                if (VERBOSE_GBX) log("Listing all ChunkIds for file: " + filePath, LogLevel::Info, 3503, "ListAllChunkIds");
                 for (uint i = 0; i < headerChunks.Length; i++) {
-                    if (VERBOSE_GBX) log("Chunk " + tostring(i) + " - ChunkId: " + tostring(headerChunks[i].ChunkId) + ", ChunkSize: " + tostring(headerChunks[i].ChunkSize), LogLevel::Info, 3398, "ListAllChunkIds");
+                    if (VERBOSE_GBX) log("Chunk " + tostring(i) + " - ChunkId: " + tostring(headerChunks[i].ChunkId) + ", ChunkSize: " + tostring(headerChunks[i].ChunkSize), LogLevel::Info, 3505, "ListAllChunkIds");
                 }
             }
 
@@ -3511,9 +3511,9 @@ namespace FileExplorer {
             }
 
             dictionary Parse() {
-                if (VERBOSE_GBX) log("Parse started for file: " + filePath, LogLevel::Info, 3407, "Parse");
+                if (VERBOSE_GBX) log("Parse started for file: " + filePath, LogLevel::Info, 3514, "Parse");
                 try {
-                    if (VERBOSE_GBX) log("Opening GBX file: " + filePath, LogLevel::Info, 3409, "Parse");
+                    if (VERBOSE_GBX) log("Opening GBX file: " + filePath, LogLevel::Info, 3516, "Parse");
                     gbxFile.Open(filePath, IO::FileMode::Read);
                     ReadHeader();
 
@@ -3521,9 +3521,9 @@ namespace FileExplorer {
                     ReadChunks();
                     ParseXmlContent();
                     gbxFile.Close();
-                    if (VERBOSE_GBX) log("Closed GBX file: " + filePath, LogLevel::Info, 3418, "Parse");
+                    if (VERBOSE_GBX) log("Closed GBX file: " + filePath, LogLevel::Info, 3524, "Parse");
                 } catch {
-                    if (VERBOSE_GBX) log("Exception in file: " + filePath, LogLevel::Error, 3420, "Parse");
+                    if (VERBOSE_GBX) log("Exception in file: " + filePath, LogLevel::Error, 3526, "Parse");
                     gbxFile.Close();
                 }
                 return metadata;
@@ -3630,7 +3630,7 @@ namespace FileExplorer {
                     }
                 }
             }
-            log("All file explorer instances for this plugin have been closed.", LogLevel::Error, 3527, "fe_ForceClose");
+            log("All file explorer instances for this plugin have been closed.", LogLevel::Error, 3633, "fe_ForceClose");
             return;
         }
 
@@ -3639,7 +3639,7 @@ namespace FileExplorer {
         if (explorersByPlugin.Get(sessionKey, @explorer)) {
             explorer.Close();
             explorersByPlugin.Delete(sessionKey);
-            log("File explorer instance '" + id + "' has been closed.", LogLevel::Info, 3536, "fe_ForceClose");
+            log("File explorer instance '" + id + "' has been closed.", LogLevel::Info, 3642, "fe_ForceClose");
         } else {
             NotifyError("Error", "Session ID '" + id + "' not found for this plugin.", 20000);
         }
