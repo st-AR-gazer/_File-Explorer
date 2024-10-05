@@ -3038,12 +3038,14 @@ namespace FileExplorer {
 
             // Handle right- and control-click (context menu)
             if (enterType == EnterType::RightClick || enterType == EnterType::ControlClick) {
-                // Set as normal click first (to fix selection issues), then right click
-                if (contextType == ContextType::mainArea) {
-                    for (uint i = 0; i < explorer.tab[0].Elements.Length; i++) {
-                        explorer.tab[0].Elements[i].isSelected = false;
+                if (contextType == ContextType::mainArea || contextType == ContextType::selectedElements || contextType == ContextType::pinnedElements) {
+                    if (contextType != ContextType::selectedElements) {
+                        for (uint i = 0; i < explorer.tab[0].Elements.Length; i++) {
+                            explorer.tab[0].Elements[i].isSelected = false;
+                        }
+                        element.isSelected = true;
                     }
-                    element.isSelected = true;
+
                     element.lastSelectedTime = currentTime;
                     element.lastClickTime = currentTime;
                     @explorer.CurrentSelectedElement = element;
@@ -3057,51 +3059,88 @@ namespace FileExplorer {
 
             if (!isValidForSelection) return;
 
-            // Handle double-click for selection or folder navigation
-            if (contextType == ContextType::pinnedElements || element.isSelected) {
-                if (currentTime - element.lastClickTime <= doubleClickThreshold) {
-                    if (contextType == ContextType::pinnedElements) {
-                        if (canAddMore && (instConfig.returnType == "path" ? instConfig.selectedPaths.Find(element.path) == -1 : instConfig.selectedElements.Find(element) == -1)) {
-                            if(instConfig.returnType == "path") {
-                                instConfig.selectedPaths.InsertLast(element.path);
-                                utils.TruncateSelectedPathsIfNeeded();
-                            } else if(instConfig.returnType == "elementinfo") {
-                                instConfig.selectedElements.InsertLast(element);
-                                utils.TruncateSelectedPathsIfNeeded();
-                            }
+            // Handle double-click
+            if (currentTime - element.lastClickTime <= doubleClickThreshold) {
+                if (contextType == ContextType::selectedElements) {
+                    if(instConfig.returnType == "path") {
+                        int index = instConfig.selectedPaths.Find(element.path);
+                        if(index != -1) {
+                            instConfig.selectedPaths.RemoveAt(index);
+                            element.isSelected = false;
+                            log("Removed path from selected paths: " + element.path, LogLevel::Info, 10000, "HandleElementSelection");
                         }
-                        @explorer.CurrentSelectedElement = element;
-                    } else if (element.isFolder) {
+                    } else if(instConfig.returnType == "elementinfo") {
+                        int index = instConfig.selectedElements.Find(element);
+                        if(index != -1) {
+                            instConfig.selectedElements.RemoveAt(index);
+                            element.isSelected = false;
+                            log("Removed element from selected elements: " + element.name, LogLevel::Info, 10001, "HandleElementSelection");
+                        }
+                    }
+                }
+                else if (contextType == ContextType::pinnedElements) {
+                    if (canAddMore && (instConfig.returnType == "path" ? instConfig.selectedPaths.Find(element.path) == -1 : instConfig.selectedElements.Find(element) == -1)) {
+                        if(instConfig.returnType == "path") {
+                            instConfig.selectedPaths.InsertLast(element.path);
+                            utils.TruncateSelectedPathsIfNeeded();
+                        } else if(instConfig.returnType == "elementinfo") {
+                            instConfig.selectedElements.InsertLast(element);
+                            utils.TruncateSelectedPathsIfNeeded();
+                        }
+                        log("Added element to selected elements via pinnedElements double-click: " + element.name, LogLevel::Info, 10002, "HandleElementSelection");
+                    }
+                    @explorer.CurrentSelectedElement = element;
+                }
+                else if (contextType == ContextType::mainArea) {
+                    if (element.isFolder) {
                         explorer.tab[0].nav.MoveIntoSelectedDirectory();
+                        log("Navigated into folder: " + element.path, LogLevel::Info, 10003, "HandleElementSelection");
                     } else if (canAddMore) {
                         if (instConfig.returnType == "path") {
                             if (instConfig.selectedPaths.Find(element.path) == -1) {
                                 instConfig.selectedPaths.InsertLast(element.path);
                                 utils.TruncateSelectedPathsIfNeeded();
+                                log("Added path to selected paths via mainArea double-click: " + element.path, LogLevel::Info, 10004, "HandleElementSelection");
                             }
                         } else if (instConfig.returnType == "elementinfo") {
                             if (instConfig.selectedElements.Find(element) == -1) {
                                 instConfig.selectedElements.InsertLast(element);
                                 utils.TruncateSelectedPathsIfNeeded();
+                                log("Added element to selected elements via mainArea double-click: " + element.name, LogLevel::Info, 10005, "HandleElementSelection");
                             }
                         }
-                        @explorer.CurrentSelectedElement = element;
                     }
-                } else {
+                }
+            }
+            else {
+                if (contextType == ContextType::selectedElements) {
                     element.lastClickTime = currentTime;
                 }
-            } 
-            // Handle normal left-click for selection
-            else if (enterType == EnterType::LeftClick) {
-                if (contextType != ContextType::pinnedElements) {
-                    for (uint i = 0; i < explorer.tab[0].Elements.Length; i++) {
-                        explorer.tab[0].Elements[i].isSelected = false;
+                else if (contextType == ContextType::pinnedElements) {
+                    if (canAddMore && (instConfig.returnType == "path" ? instConfig.selectedPaths.Find(element.path) == -1 : instConfig.selectedElements.Find(element) == -1)) {
+                        if(instConfig.returnType == "path") {
+                            instConfig.selectedPaths.InsertLast(element.path);
+                            utils.TruncateSelectedPathsIfNeeded();
+                        } else if(instConfig.returnType == "elementinfo") {
+                            instConfig.selectedElements.InsertLast(element);
+                            utils.TruncateSelectedPathsIfNeeded();
+                        }
+                        log("Added element to selected elements via pinnedElements single click: " + element.name, LogLevel::Info, 10006, "HandleElementSelection");
                     }
+                    @explorer.CurrentSelectedElement = element;
+                    element.lastClickTime = currentTime;
                 }
-                element.isSelected = true;
-                element.lastSelectedTime = currentTime;
-                element.lastClickTime = currentTime;
-                @explorer.CurrentSelectedElement = element;
+                else if (contextType == ContextType::mainArea) {
+                    if (contextType != ContextType::pinnedElements) {
+                        for (uint i = 0; i < explorer.tab[0].Elements.Length; i++) {
+                            explorer.tab[0].Elements[i].isSelected = false;
+                        }
+                    }
+                    element.isSelected = true;
+                    element.lastSelectedTime = currentTime;
+                    element.lastClickTime = currentTime;
+                    @explorer.CurrentSelectedElement = element;
+                }
             }
         }
 
