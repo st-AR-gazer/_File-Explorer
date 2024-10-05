@@ -1714,6 +1714,32 @@ namespace FileExplorer {
             }
         }
 
+        void SelectAllVisibleAndValidElements() {
+            for(uint i = 0; i < explorer.tab[0].Elements.Length; i++) {
+                ElementInfo@ element = explorer.tab[0].Elements[i];
+                
+                if(element.shouldShow && IsValidReturnElement(element)) {
+                    if(explorer.instConfig.returnType == "path") {
+                        if(explorer.instConfig.minMaxReturnAmount.y != -1 && explorer.instConfig.selectedPaths.Length >= uint(explorer.instConfig.minMaxReturnAmount.y)) {
+                            break;
+                        }
+                        
+                        if(explorer.instConfig.selectedPaths.Find(element.path) == -1) {
+                            explorer.instConfig.selectedPaths.InsertLast(element.path);
+                        }
+                    } else if(explorer.instConfig.returnType == "elementinfo") {
+                        if(explorer.instConfig.minMaxReturnAmount.y != -1 && explorer.instConfig.selectedElements.Length >= uint(explorer.instConfig.minMaxReturnAmount.y)) {
+                            break;
+                        }
+                        
+                        if(explorer.instConfig.selectedElements.Find(element) == -1) {
+                            explorer.instConfig.selectedElements.InsertLast(element);
+                        }
+                    }
+                }
+            }
+        }
+
         // ------------------------------------------------
         // Sorting Functions
         // ------------------------------------------------
@@ -2608,6 +2634,12 @@ namespace FileExplorer {
                     } else if(instConfig.returnType == "elementinfo") {
                         utils.DisabledButton("Return Selected Elements");
                     }
+                }
+
+                UI::SameLine();
+
+                if (UI::Button("Select All")) {
+                    utils.SelectAllVisibleAndValidElements();
                 }
 
                 UI::SameLine();
